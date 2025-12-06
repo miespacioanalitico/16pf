@@ -18,8 +18,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; -webkit-tap-highlight-color: transparent; }
-        .fade-in { animation: fadeIn 0.6s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         /* Estilos de impresión */
         @media print {
@@ -60,28 +60,28 @@
         const FACTORS = {
             'A': { name: 'Afabilidad', low: 'Reservada', high: 'Participativa', descLow: 'Fria, impersonal, distante', descHigh: 'Cálida, afable, generosa, atenta a los demás' },
             'B': { name: 'Razonamiento', low: 'Pensamiento Concreto', high: 'Pensamiento Abstracto', descLow: 'Capacidad mental baja, incapaz de manejar problemas abstractos', descHigh: 'Capacidad mental alta, perspicaz, aprendizaje rápido' },
-            'C': { name: 'Estabilidad', low: 'Reactivo', high: 'Emocionalmente Estable', descLow: 'Se perturba con facilidad, emocional, inestable', descHigh: 'Madura, tranquila, afronta la realidad' },
-            'E': { name: 'Dominancia', low: 'Deferente', high: 'Dominante', descLow: 'Cooperativa, evita conflictos, sumisa', descHigh: 'Asertiva, agresiva, competitiva, obstinada' },
-            'F': { name: 'Animación', low: 'Seria', high: 'Animada', descLow: 'Reprimida, cuidadosa, introspectiva', descHigh: 'Entusiasta, espontánea, alegre, expresiva' },
-            'G': { name: 'Atención a Normas', low: 'Inconforme', high: 'Cumplidora', descLow: 'Expedita, esquiva las reglas', descHigh: 'Escrupulosa, moralista, formal' },
-            'H': { name: 'Atrevimiento', low: 'Tímida', high: 'Atrevida', descLow: 'Cohibida, sensible a la amenaza', descHigh: 'Aventurera, socialmente atrevida' },
-            'I': { name: 'Sensibilidad', low: 'Objetiva', high: 'Sensible', descLow: 'Utilitaria, ruda, realista', descHigh: 'Esteta, sentimental, impresionable' },
-            'L': { name: 'Vigilancia', low: 'Confiada', high: 'Vigilante', descLow: 'Adaptable, sin sospechas', descHigh: 'Suspicaz, escéptica, precavida' },
-            'M': { name: 'Abstracción', low: 'Práctica', high: 'Abstraída', descLow: 'Con los pies en la tierra, convencional', descHigh: 'Imaginativa, bohemia, distraída' },
-            'N': { name: 'Privacidad', low: 'Abierta', high: 'Privada', descLow: 'Genuina, llana, natural', descHigh: 'Calculadora, discreta, astuta' },
-            'O': { name: 'Aprensión', low: 'Segura', high: 'Aprensiva', descLow: 'Despreocupada, satisfecha', descHigh: 'Insegura, preocupada, se culpabiliza' },
-            'Q1': { name: 'Apertura al Cambio', low: 'Tradicional', high: 'Aperturista', descLow: 'Conservadora, apegada a lo familiar', descHigh: 'Experimental, liberal, analítica' },
-            'Q2': { name: 'Autosuficiencia', low: 'Seguidora', high: 'Autosuficiente', descLow: 'Dependiente del grupo', descHigh: 'Individualista, prefiere estar sola' },
-            'Q3': { name: 'Perfeccionismo', low: 'Flexible', high: 'Perfeccionista', descLow: 'Tolerante con el desorden', descHigh: 'Organizada, disciplinada' },
-            'Q4': { name: 'Tensión', low: 'Relajada', high: 'Tensa', descLow: 'Plácida, paciente', descHigh: 'Energética, impaciente, sobreexcitada' }
+            'C': { name: 'Estabilidad', low: 'Reactivo, Inestable', high: 'Emocionalmente Estable', descLow: 'Se perturba con facilidad, emocional, inestable', descHigh: 'Madura, tranquila, afronta la realidad' },
+            'E': { name: 'Dominancia', low: 'Deferente', high: 'Dominante', descLow: 'Cooperativa, evita conflictos, sumisa, humilde', descHigh: 'Asertiva, agresiva, competitiva, obstinada' },
+            'F': { name: 'Animación', low: 'Serio, Reprimido', high: 'Entusiasta, Espontáneo', descLow: 'Seria, Reprimida, cuidadosa, introspectiva', descHigh: 'Entusiasta, espontánea, alegre, expresiva' },
+            'G': { name: 'Atención a Normas', low: 'Inconforme', high: 'Cumplidora', descLow: 'Expedita, esquiva las reglas, indulgente consigo misma', descHigh: 'Escrupulosa, moralista, formal, responsable' },
+            'H': { name: 'Atrevimiento', low: 'Tímido, Cohibido', high: 'Atrevido, Seguro', descLow: 'Tímida, temerosa, Cohibida. Cauta', descHigh: 'Aventurera, socialmente atrevida, emprendedora' },
+            'I': { name: 'Sensibilidad', low: 'Objetivo, Utilitario', high: 'Sensible, Sentimental', descLow: 'Utilitaria, ruda, confía en sí misma, realista', descHigh: 'Esteta, sentimental, dependiente, impresionable' },
+            'L': { name: 'Vigilancia', low: 'Confiado, Adaptable', high: 'Vigilante, Suspicaz', descLow: 'Adaptable, acepta condiciones, sin sospechas', descHigh: 'Suspicaz, escéptica, precavida, desconfiada' },
+            'M': { name: 'Abstracción', low: 'Práctico, Realista', high: 'Abstraído, Imaginativo', descLow: 'Con los pies en la tierra, realista, convencional', descHigh: 'Imaginativa, bohemia, distraída, idealista' },
+            'N': { name: 'Privacidad', low: 'Abierto, Genuino', high: 'Privado, Calculador', descLow: 'Genuina, llana, natural, ingenua', descHigh: 'Calculadora, discreta, astuta, refinada' },
+            'O': { name: 'Aprensión', low: 'Seguro, Despreocupado', high: 'Aprensivo, Inseguro', descLow: 'Despreocupada, satisfecha, tranquila', descHigh: 'Insegura, preocupada, se culpabiliza' },
+            'Q1': { name: 'Apertura al Cambio', low: 'Tradicional', high: 'Aperturista', descLow: 'Conservadora, apegada a lo familiar', descHigh: 'Experimental, liberal, analítica, innovadora' },
+            'Q2': { name: 'Autosuficiencia', low: 'Seguidor', high: 'Autosuficiente', descLow: 'Se integra en el grupo, dependiente', descHigh: 'Individualista, prefiere estar sola, llena de recursos' },
+            'Q3': { name: 'Perfeccionismo', low: 'Flexible', high: 'Perfeccionista', descLow: 'Tolerante con el desorden, indisciplinada', descHigh: 'Organizada, disciplinada, socialmente precisa' },
+            'Q4': { name: 'Tensión', low: 'Relajado', high: 'Tenso', descLow: 'Plácida, paciente, tranquila', descHigh: 'Energética, impaciente, intranquila, sobreexcitada' }
         };
 
         const GLOBAL_FACTORS = {
             'EXT': { name: 'Extraversión', low: 'Introvertido', high: 'Extravertido', desc: 'Orientación hacia el mundo exterior o interior.' },
-            'ANS': { name: 'Ansiedad', low: 'Poca Ansiedad', high: 'Mucha Ansiedad', desc: 'Nivel de activación emocional.' },
-            'DUR': { name: 'Dureza', low: 'Receptivo', high: 'Mentalidad Dura', desc: 'Estilo de procesamiento.' },
-            'IND': { name: 'Independencia', low: 'Acomodaticio', high: 'Independiente', desc: 'Tendencia a la asertividad.' },
-            'AUC': { name: 'Auto-Control', low: 'Desinhibido', high: 'Auto-controlado', desc: 'Control de impulsos.' }
+            'ANS': { name: 'Ansiedad', low: 'Poca Ansiedad', high: 'Mucha Ansiedad', desc: 'Nivel de activación y adaptación emocional.' },
+            'DUR': { name: 'Dureza', low: 'Receptivo', high: 'Mentalidad Dura', desc: 'Estilo de procesamiento de información.' },
+            'IND': { name: 'Independencia', low: 'Acomodaticio', high: 'Independiente', desc: 'Tendencia a la asertividad y liderazgo.' },
+            'AUC': { name: 'Auto-Control', low: 'Desinhibido', high: 'Auto-controlado', desc: 'Capacidad de contener impulsos y seguir normas.' }
         };
 
         const RESPONSE_STYLES = {
@@ -381,9 +381,14 @@
                 const currentQ = questions[currentIndex];
                 const newAnswers = { ...answers, [currentQ.id]: option };
                 setAnswers(newAnswers);
-                if (currentIndex < questions.length - 1) { setCurrentIndex(currentIndex + 1); } 
-                else { onComplete(newAnswers); }
+
+                if (currentIndex < questions.length - 1) {
+                    setCurrentIndex(currentIndex + 1);
+                } else {
+                    onComplete(newAnswers);
+                }
             };
+
             const q = questions[currentIndex];
 
             return (
@@ -393,19 +398,28 @@
                         <span>{Math.round(((currentIndex + 1) / questions.length) * 100)}% Completado</span>
                     </div>
                     <ProgressBar current={currentIndex + 1} total={questions.length} />
+                    
                     <div className="min-h-[120px] flex items-center justify-center mb-8 bg-gray-50 rounded-xl p-6 border border-gray-100">
-                        <h2 className="text-2xl font-medium text-gray-800 text-center leading-relaxed">{q.text}</h2>
+                        <h2 className="text-2xl font-medium text-gray-800 text-center leading-relaxed">
+                            {q.text}
+                        </h2>
                     </div>
+
                     <div className="grid gap-4">
-                        {['a', 'b', 'c'].map(opt => (
-                            <button key={opt} onClick={() => handleAnswer(opt)} className="w-full text-left p-5 border-2 border-gray-100 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all flex items-center group shadow-sm hover:shadow-md">
-                                <span className="bg-gray-200 text-gray-600 font-bold py-1 px-3 rounded-lg mr-4 group-hover:bg-blue-200 group-hover:text-blue-800 transition-colors">{opt.toUpperCase()}</span>
-                                <span className="text-lg text-gray-700 font-medium group-hover:text-blue-900">
-                                    {/* Lógica visual para opción B: muestra "?" en personalidad, texto específico en inteligencia */}
-                                    {opt === 'b' && q.factor !== 'B' ? "?" : q[opt]}
-                                </span>
-                            </button>
-                        ))}
+                        <button onClick={() => handleAnswer('a')} className="w-full text-left p-5 border-2 border-gray-100 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all flex items-center group shadow-sm hover:shadow-md">
+                            <span className="bg-gray-200 text-gray-600 font-bold py-1 px-3 rounded-lg mr-4 group-hover:bg-blue-200 group-hover:text-blue-800 transition-colors">A</span>
+                            <span className="text-lg text-gray-700 font-medium group-hover:text-blue-900">{q.a}</span>
+                        </button>
+                        <button onClick={() => handleAnswer('b')} className="w-full text-left p-5 border-2 border-gray-100 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all flex items-center group shadow-sm hover:shadow-md">
+                            <span className="bg-gray-200 text-gray-600 font-bold py-1 px-3 rounded-lg mr-4 group-hover:bg-blue-200 group-hover:text-blue-800 transition-colors">B</span>
+                            <span className="text-lg text-gray-700 font-medium group-hover:text-blue-900">
+                                {q.factor === 'B' ? q.b : "Indeciso"}
+                            </span>
+                        </button>
+                        <button onClick={() => handleAnswer('c')} className="w-full text-left p-5 border-2 border-gray-100 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all flex items-center group shadow-sm hover:shadow-md">
+                            <span className="bg-gray-200 text-gray-600 font-bold py-1 px-3 rounded-lg mr-4 group-hover:bg-blue-200 group-hover:text-blue-800 transition-colors">C</span>
+                            <span className="text-lg text-gray-700 font-medium group-hover:text-blue-900">{q.c}</span>
+                        </button>
                     </div>
                 </div>
             );
@@ -413,6 +427,7 @@
 
         const ResultExportScreen = ({ data }) => {
             const [downloaded, setDownloaded] = useState(false);
+
             const generateFile = () => {
                 const jsonString = JSON.stringify(data);
                 const encodedData = btoa(unescape(encodeURIComponent(jsonString))); 
@@ -425,11 +440,15 @@
                 link.click();
                 setDownloaded(true);
             };
+
             return (
                 <div className="max-w-xl mx-auto bg-white p-10 rounded-lg shadow-xl text-center fade-in">
                     <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
                     <h2 className="text-3xl font-bold text-gray-800 mb-4">¡Evaluación Finalizada!</h2>
-                    <p className="text-gray-600 mb-8 text-lg">Has completado exitosamente los 185 reactivos.</p>
+                    <p className="text-gray-600 mb-8 text-lg">
+                        Has completado exitosamente los 185 reactivos.
+                    </p>
+
                     <div className="bg-blue-50 p-6 rounded-lg text-blue-900 text-left border border-blue-200 mb-8 shadow-inner">
                         <div className="flex items-start gap-3">
                             <Lock className="w-6 h-6 mt-0.5 flex-shrink-0 text-blue-600"/> 
@@ -438,77 +457,88 @@
                                 <ol className="list-decimal pl-5 space-y-2">
                                     <li>Presiona el botón <strong>"Descargar Resultados"</strong>.</li>
                                     <li>Se guardará un archivo <code>.16pf</code> en tu dispositivo.</li>
-                                    <li><strong>Envía este archivo</strong> a tu psicólogo o evaluador.</li>
+                                    <li><strong>Envía este archivo</strong> a tu psicólogo o evaluador por el medio acordado (WhatsApp, Email, etc.).</li>
                                 </ol>
                             </div>
                         </div>
                     </div>
+
                     <button onClick={generateFile} className="w-full bg-green-600 text-white py-4 px-6 rounded-lg font-bold hover:bg-green-700 flex justify-center items-center gap-3 shadow-lg transition-all transform hover:scale-[1.02] text-lg">
                         <Download className="w-6 h-6" /> Descargar Resultados (.16pf)
                     </button>
+
+                    {downloaded && (
+                        <div className="mt-6 p-4 bg-green-100 text-green-800 rounded-lg border border-green-200 animate-pulse font-medium">
+                            ¡Archivo descargado correctamente! No olvides enviarlo.
+                        </div>
+                    )}
                 </div>
             );
         };
 
+        // --- ZONA DEL TERAPEUTA ---
+        // Versión optimizada para móviles con botón "Seleccionar y Analizar"
+
         const TherapistZone = () => {
             const [reportData, setReportData] = useState(null);
-            const [fileSelected, setFileSelected] = useState(null); // Nuevo estado para el archivo
+            const [fileSelected, setFileSelected] = useState(null);
             const [error, setError] = useState('');
             const fileInputRef = useRef(null);
 
+            // Manejar la selección del archivo
             const handleFileSelect = (e) => {
-                if (e.target.files[0]) {
-                    setFileSelected(e.target.files[0]);
-                    setError(''); // Limpiar errores previos
+                const file = e.target.files[0];
+                if (file) {
+                    setFileSelected(file);
+                    setError('');
+                    // Procesamiento automático al seleccionar
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const fileContent = event.target.result;
+                            let jsonData;
+                            try {
+                                jsonData = JSON.parse(fileContent);
+                            } catch (e) {
+                                 const decodedString = decodeURIComponent(escape(atob(fileContent)));
+                                 jsonData = JSON.parse(decodedString);
+                            }
+                            
+                            // --- LÓGICA DE CORRECCIÓN (MOCK) ---
+                            const stens = {};
+                            Object.keys(FACTORS).forEach(f => {
+                                let simulatedSten = Math.floor(Math.random() * 10) + 1; 
+                                stens[f] = simulatedSten;
+                            });
+
+                            // CÁLCULO DE FACTORES GLOBALES
+                            const EXT_RAW = (stens['A'] + stens['F'] + stens['H'] + (11 - stens['N']) + (11 - stens['Q2'])) / 5;
+                            const ANS_RAW = ((11 - stens['C']) + stens['L'] + stens['O'] + stens['Q4']) / 4;
+                            const DUR_RAW = ((11 - stens['A']) + (11 - stens['I']) + (11 - stens['M']) + stens['Q1']) / 4;
+                            const IND_RAW = (stens['E'] + stens['H'] + stens['L'] + stens['Q1']) / 4;
+                            const AUC_RAW = ((11 - stens['F']) + stens['G'] + (11 - stens['M']) + stens['Q3']) / 4;
+
+                            const globalStens = {
+                                'EXT': Math.round(Math.min(10, Math.max(1, EXT_RAW))),
+                                'ANS': Math.round(Math.min(10, Math.max(1, ANS_RAW))),
+                                'DUR': Math.round(Math.min(10, Math.max(1, DUR_RAW))),
+                                'IND': Math.round(Math.min(10, Math.max(1, IND_RAW))),
+                                'AUC': Math.round(Math.min(10, Math.max(1, AUC_RAW)))
+                            };
+
+                            const responseStyles = { 'MI': Math.floor(Math.random() * 10) + 1, 'IN': Math.floor(Math.random() * 10) + 1, 'AQ': Math.floor(Math.random() * 10) + 1 };
+                            setReportData({ ...jsonData, stens, globalStens, responseStyles });
+                        } catch (err) { 
+                            setError("Error: El archivo no tiene el formato correcto."); 
+                            console.error(err); 
+                        }
+                    };
+                    reader.readAsText(file);
                 }
             };
 
-            const processFile = () => {
-                if (!fileSelected) {
-                    setError("Por favor selecciona un archivo primero.");
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        // Intento de doble parseo para compatibilidad móvil/desktop
-                        const fileContent = event.target.result;
-                        let jsonData;
-                        try {
-                            jsonData = JSON.parse(fileContent);
-                        } catch (e) {
-                             const decodedString = decodeURIComponent(escape(atob(fileContent)));
-                             jsonData = JSON.parse(decodedString);
-                        }
-                        
-                        // --- CÁLCULO DE BAREMOS (SIMULADO) ---
-                        const stens = {};
-                        Object.keys(FACTORS).forEach(f => {
-                            let simulatedSten = Math.floor(Math.random() * 10) + 1; 
-                            stens[f] = simulatedSten;
-                        });
-
-                        // CÁLCULO DE FACTORES GLOBALES
-                        const EXT_RAW = (stens['A'] + stens['F'] + stens['H'] + (11 - stens['N']) + (11 - stens['Q2'])) / 5;
-                        const ANS_RAW = ((11 - stens['C']) + stens['L'] + stens['O'] + stens['Q4']) / 4;
-                        const DUR_RAW = ((11 - stens['A']) + (11 - stens['I']) + (11 - stens['M']) + stens['Q1']) / 4;
-                        const IND_RAW = (stens['E'] + stens['H'] + stens['L'] + stens['Q1']) / 4;
-                        const AUC_RAW = ((11 - stens['F']) + stens['G'] + (11 - stens['M']) + stens['Q3']) / 4;
-
-                        const globalStens = {
-                            'EXT': Math.round(Math.min(10, Math.max(1, EXT_RAW))),
-                            'ANS': Math.round(Math.min(10, Math.max(1, ANS_RAW))),
-                            'DUR': Math.round(Math.min(10, Math.max(1, DUR_RAW))),
-                            'IND': Math.round(Math.min(10, Math.max(1, IND_RAW))),
-                            'AUC': Math.round(Math.min(10, Math.max(1, AUC_RAW)))
-                        };
-
-                        const responseStyles = { 'MI': Math.floor(Math.random() * 10) + 1, 'IN': Math.floor(Math.random() * 10) + 1, 'AQ': Math.floor(Math.random() * 10) + 1 };
-                        setReportData({ ...jsonData, stens, globalStens, responseStyles });
-                    } catch (err) { setError("Error: El archivo no tiene el formato correcto."); console.error(err); }
-                };
-                reader.readAsText(fileSelected);
+            const triggerFileInput = () => {
+                fileInputRef.current.click();
             };
 
             if (reportData) return <ReportView data={reportData} onReset={() => { setReportData(null); setFileSelected(null); }} />;
@@ -521,29 +551,20 @@
                     <h2 className="text-3xl font-bold text-gray-800 mb-2">Portal del Evaluador</h2>
                     <p className="text-gray-500 text-lg mb-8">Carga el archivo <code>.16pf</code> generado por el paciente.</p>
                     
-                    <div className="mb-6">
-                         <input 
-                            type="file" 
-                            ref={fileInputRef}
-                            onChange={handleFileSelect} 
-                            className="hidden" 
-                            id="file-upload"
-                        />
-                        <label htmlFor="file-upload" className="cursor-pointer border-3 border-dashed border-purple-200 bg-purple-50 rounded-xl p-10 block hover:bg-purple-100 transition-colors">
-                            <Upload className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-                            <span className="text-purple-900 font-bold text-lg block">
-                                {fileSelected ? fileSelected.name : "Toca aquí para seleccionar archivo"}
-                            </span>
-                        </label>
-                    </div>
+                    <input 
+                        type="file" 
+                        ref={fileInputRef}
+                        onChange={handleFileSelect} 
+                        className="hidden" 
+                        accept=".16pf,.txt"
+                    />
 
                     <button 
-                        onClick={processFile} 
-                        disabled={!fileSelected}
-                        className={`w-full py-4 px-6 rounded-lg font-bold text-lg transition-all flex justify-center items-center gap-2
-                            ${fileSelected ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg transform hover:scale-[1.02]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                        onClick={triggerFileInput}
+                        className="w-full py-6 px-6 rounded-xl font-bold text-xl transition-all flex flex-col justify-center items-center gap-3 bg-purple-50 border-3 border-dashed border-purple-300 text-purple-700 hover:bg-purple-100 hover:border-purple-500 shadow-sm"
                     >
-                        <Activity className="w-5 h-5" /> Analizar Resultados
+                        <Upload className="w-10 h-10" /> 
+                        <span>Seleccionar y Analizar Archivo</span>
                     </button>
                     
                     {error && <div className="mt-8 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center gap-3"><AlertCircle className="w-6 h-6"/> {error}</div>}
@@ -567,7 +588,7 @@
                 <div className="max-w-5xl mx-auto bg-white p-12 rounded-xl shadow-2xl fade-in print:shadow-none print:w-full print:p-0">
                     <div className="flex justify-between items-start mb-10 border-b pb-6 print:hidden">
                         <button onClick={onReset} className="text-gray-600 hover:text-gray-900 flex items-center gap-2 font-medium">&larr; Evaluar otro paciente</button>
-                        <button onClick={() => window.print()} className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg flex items-center gap-2 font-bold shadow-md transition-colors"><FileText className="w-5 h-5" /> Imprimir / Guardar PDF</button>
+                        <button onClick={() => window.print()} className="bg-gray-800 text-white px-6 py-2 rounded-lg font-bold shadow-md">Imprimir / PDF</button>
                     </div>
                     <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b-4 border-gray-800 pb-6">
                         <div>
