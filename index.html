@@ -14,6 +14,9 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- html2pdf para generación automática de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -63,9 +66,9 @@
         const FACTORS = {
             'A': { name: 'Afabilidad', low: 'Reservada', high: 'Participativa', descLow: 'Fria, impersonal, distante', descHigh: 'Cálida, afable, generosa, atenta a los demás' },
             'B': { name: 'Razonamiento', low: 'Pensamiento Concreto', high: 'Pensamiento Abstracto', descLow: 'Capacidad mental baja, incapaz de manejar problemas abstractos', descHigh: 'Capacidad mental alta, perspicaz, aprendizaje rápido' },
-            'C': { name: 'Estabilidad', low: 'Reactivo', high: 'Emocionalmente Estable', descLow: 'Se perturba con facilidad, emocional, inestable', descHigh: 'Madura, tranquila, afronta la realidad' },
+            'C': { name: 'Estabilidad', low: 'Reactiva', high: 'Emocionalmente Estable', descLow: 'Se perturba con facilidad, emocional, inestable', descHigh: 'Madura, tranquila, afronta la realidad' },
             'E': { name: 'Dominancia', low: 'Deferente', high: 'Dominante', descLow: 'Cooperativa, evita conflictos, sumisa, humilde', descHigh: 'Asertiva, agresiva, competitiva, obstinada' },
-            'F': { name: 'Animación', low: 'Seria', high: 'Animada', descLow: 'Reprimida, cuidadosa, introspectiva, taciturna', descHigh: 'Entusiasta, espontánea, alegre, expresiva' },
+            'F': { name: 'Animación', low: 'Serio', high: 'Animada', descLow: 'Reprimida, cuidadosa, introspectiva, taciturna', descHigh: 'Entusiasta, espontánea, alegre, expresiva' },
             'G': { name: 'Atención a Normas', low: 'Inconforme', high: 'Cumplidora', descLow: 'Expedita, esquiva las reglas, indulgente consigo misma', descHigh: 'Escrupulosa, moralista, formal, responsable' },
             'H': { name: 'Atrevimiento', low: 'Tímido, Cohibido', high: 'Atrevido, Seguro', descLow: 'Tímida, temerosa, Cohibida. Cauta', descHigh: 'Aventurera, socialmente atrevida, emprendedora' },
             'I': { name: 'Sensibilidad', low: 'Objetivo, Utilitario', high: 'Sensible, Sentimental', descLow: 'Utilitaria, ruda, confía en sí misma, realista', descHigh: 'Esteta, sentimental, dependiente, impresionable' },
@@ -75,7 +78,7 @@
             'O': { name: 'Aprensión', low: 'Seguro, Despreocupado', high: 'Aprensivo, Inseguro', descLow: 'Despreocupada, satisfecha, tranquila', descHigh: 'Insegura, preocupada, se culpabiliza' },
             'Q1': { name: 'Apertura al Cambio', low: 'Tradicional', high: 'Aperturista', descLow: 'Conservadora, apegada a lo familiar', descHigh: 'Experimental, liberal, analítica, innovadora' },
             'Q2': { name: 'Autosuficiencia', low: 'Seguidor, Grupo', high: 'Autosuficiente, Individualista', descLow: 'Se integra en el grupo, dependiente', descHigh: 'Individualista, prefiere estar sola, llena de recursos' },
-            'Q3': { name: 'Perfeccionismo', low: 'Flexible, Tolerante', high: 'Perfeccionista, Organizado', descLow: 'Tolerante con el desorden, indisciplinada', descHigh: 'Organizada, disciplinada, socialmente precisa' },
+            'Q3': { name: 'Perfeccionismo', low: 'Flexible', high: 'Perfeccionista', descLow: 'Tolerante con el desorden, indisciplinada', descHigh: 'Organizada, disciplinada, socialmente precisa' },
             'Q4': { name: 'Tensión', low: 'Relajado, Plácido', high: 'Tenso, Enérgico', descLow: 'Plácida, paciente, tranquila', descHigh: 'Energética, impaciente, intranquila, sobreexcitada' }
         };
 
@@ -265,6 +268,8 @@
             { id: 168, text: "Preferiría un hogar en el que", a: "Se sigan normas estrictas de conducta", b: "Indeciso", c: "No haya muchas normas", factor: "E" },
             { id: 169, text: "En las reuniones sociales suelo sentirme tímido e inseguro de mí mismo (a)", a: "Verdadero", b: "Indeciso", c: "Falso", factor: "H" },
             { id: 170, text: "En la televisión prefiero", a: "Un programa sobre nuevos inventos prácticos", b: "Indeciso", c: "Un concierto de un artista famoso", factor: "I" },
+            
+            // Preguntas de inteligencia (Factor B) - Mantienen opciones específicas
             { id: 171, text: "\"Minuto\" es a \"hora\", como \"segundo\" es a:", a: "minuto", b: "milisegundo", c: "hora", factor: "B" },
             { id: 172, text: "\"Renacuajo\" es a \"rana\" como \"larva\" es a:", a: "araña", b: "gusano", c: "insecto", factor: "B" },
             { id: 173, text: "\"Jamón\" es a \"cerdo\" como \"chuleta\" es a:", a: "cordero", b: "pollo", c: "merluza", factor: "B" },
@@ -321,11 +326,13 @@
                     <div className="bg-blue-50 p-6 rounded-md mb-8 text-sm text-blue-900 border-l-4 border-blue-500 shadow-sm">
                         <h3 className="font-bold text-lg mb-2 flex items-center gap-2"><Info className="w-5 h-5"/> Instrucciones Generales</h3>
                         <ul className="list-disc pl-5 space-y-2">
-                            <li>Encontrará frases para conocer sus actitudes e intereses. <strong>No existen respuestas "Buenas" ni "Malas".</strong></li>
-                            <li>Conteste con sinceridad para conocer mejor su forma de ser.</li>
-                            <li>Cada frase tiene 3 opciones (a, b, c). La alternativa "b" suele ser <strong>"Indeciso"</strong> (o ?). Úsela solo si no puede decidirse.</li>
-                            <li><strong>No medite su respuesta.</strong> Marque lo primero que le venga a la mente.</li>
-                            <li>Trate de no saltar ninguna pregunta.</li>
+                            <li>A continuación encontrará unas frases que permitirán conocer sus actitudes e intereses.</li>
+                            <li><strong>En general no existen respuestas "Buenas" ni "Malas".</strong></li>
+                            <li>Conteste con sinceridad; de esta forma se podrá conocer mejor su forma de ser.</li>
+                            <li>Cada frase contiene tres posibles respuestas (a, b, c); normalmente la alternativa <strong>"b"</strong> viene con una interrogante <strong>(?)</strong>, para ser señalada cuando no es posible decidirse entre la a y la b.</li>
+                            <li><strong>No medite su respuesta.</strong> Marque la primera que le venga a la mente.</li>
+                            <li><strong>Si tiene dudas, pregunte al examinador.</strong></li>
+                            <li>Trate de contestar todas las preguntas sin saltarse ninguna.</li>
                         </ul>
                     </div>
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -337,32 +344,60 @@
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Edad</label>
-                                <input type="number" min="1" required className="block w-full rounded-md border-gray-300 shadow-sm border p-3" 
-                                    value={formData.edad} onChange={e => { const val = e.target.value; if (val >= 0) setFormData({...formData, edad: val}); }} />
+                                <input 
+                                    type="number" 
+                                    min="1" 
+                                    required 
+                                    className="block w-full rounded-md border-gray-300 shadow-sm border p-3" 
+                                    value={formData.edad} 
+                                    onChange={e => {
+                                        const val = e.target.value;
+                                        if (val >= 0) setFormData({...formData, edad: val});
+                                    }} 
+                                />
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Sexo / Género</label>
-                                <select className="block w-full rounded-md border-gray-300 shadow-sm border p-3"
-                                    value={formData.sexo} onChange={e => setFormData({...formData, sexo: e.target.value})}>
-                                    {GENDER_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                <select 
+                                    className="block w-full rounded-md border-gray-300 shadow-sm border p-3"
+                                    value={formData.sexo} 
+                                    onChange={e => setFormData({...formData, sexo: e.target.value})}
+                                >
+                                    {GENDER_OPTIONS.map(opt => (
+                                        <option key={opt} value={opt}>{opt}</option>
+                                    ))}
                                 </select>
                                 {formData.sexo === "Otro" && (
-                                    <input type="text" placeholder="Especifique su género" required className="mt-2 block w-full rounded-md border-gray-300 shadow-sm border p-3 bg-gray-50 text-sm"
-                                        value={formData.sexoOtro} onChange={e => setFormData({...formData, sexoOtro: e.target.value})} />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Especifique su género"
+                                        required
+                                        className="mt-2 block w-full rounded-md border-gray-300 shadow-sm border p-3 bg-gray-50 text-sm"
+                                        value={formData.sexoOtro}
+                                        onChange={e => setFormData({...formData, sexoOtro: e.target.value})}
+                                    />
                                 )}
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Grado Educativo</label>
                                 <select className="block w-full rounded-md border-gray-300 shadow-sm border p-3"
                                     value={formData.educacion} onChange={e => setFormData({...formData, educacion: e.target.value})}>
-                                    <option>PRIMARIA</option><option>SECUNDARIA</option><option>SUPERIOR</option><option>MAESTRIA</option><option>DOCTORADO</option>
+                                    <option>PRIMARIA</option>
+                                    <option>SECUNDARIA</option>
+                                    <option>SUPERIOR</option>
+                                    <option>MAESTRIA</option>
+                                    <option>DOCTORADO</option>
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Estado Civil</label>
                                 <select className="block w-full rounded-md border-gray-300 shadow-sm border p-3"
                                     value={formData.estadoCivil} onChange={e => setFormData({...formData, estadoCivil: e.target.value})}>
-                                    <option>SOLTERO</option><option>CASADO</option><option>DIVORCIADO</option><option>VIUDO</option><option>CONVIVIENTE</option>
+                                    <option>SOLTERO</option>
+                                    <option>CASADO</option>
+                                    <option>DIVORCIADO</option>
+                                    <option>VIUDO</option>
+                                    <option>CONVIVIENTE</option>
                                 </select>
                             </div>
                         </div>
@@ -402,7 +437,7 @@
                             <button key={opt} onClick={() => handleAnswer(opt)} className="w-full text-left p-5 border-2 border-gray-100 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all flex items-center group shadow-sm hover:shadow-md">
                                 <span className="bg-gray-200 text-gray-600 font-bold py-1 px-3 rounded-lg mr-4 group-hover:bg-blue-200 group-hover:text-blue-800 transition-colors">{opt.toUpperCase()}</span>
                                 <span className="text-lg text-gray-700 font-medium group-hover:text-blue-900">
-                                    {/* Lógica visual para opción B: muestra "Indeciso" en personalidad (1-170) y la opción real en inteligencia (171-185) */}
+                                    {/* Corrección: Solo mostrar "Indeciso" en personalidad, y opción real en inteligencia */}
                                     {opt === 'b' && q.factor !== 'B' ? "Indeciso" : q[opt]}
                                 </span>
                             </button>
@@ -439,7 +474,7 @@
                                 <ol className="list-decimal pl-5 space-y-2">
                                     <li>Presiona el botón <strong>"Descargar Resultados"</strong>.</li>
                                     <li>Se guardará un archivo <code>.16pf</code> en tu dispositivo.</li>
-                                    <li><strong>Envía este archivo</strong> a tu psicólogo o evaluador.</li>
+                                    <li><strong>Envía este archivo</strong> a tu psicólogo o evaluador por el medio acordado (WhatsApp, Email, etc.).</li>
                                 </ol>
                             </div>
                         </div>
@@ -466,7 +501,7 @@
                 }
             };
 
-            // Paso 2: Procesar archivo explícitamente
+            // Paso 2: Procesar archivo explícitamente (Solución para móvil)
             const processFile = () => {
                 if (!fileSelected) return;
                 
@@ -512,6 +547,14 @@
                 reader.readAsText(fileSelected);
             };
 
+            // Generación automática de PDF al cargar datos
+            useEffect(() => {
+                if (reportData && window.html2pdf) {
+                     // Opcional: Descomentar para autodescarga en PC, en móvil mejor dejar botón manual
+                     // document.getElementById('btn-download-pdf').click();
+                }
+            }, [reportData]);
+
             if (reportData) return <ReportView data={reportData} onReset={() => { setReportData(null); setFileSelected(null); }} />;
 
             return (
@@ -523,7 +566,6 @@
                     <p className="text-gray-500 text-lg mb-8">Carga el archivo <code>.16pf</code> generado por el paciente.</p>
                     
                     <div className="space-y-4">
-                        {/* Input oculto */}
                         <input 
                             type="file" 
                             ref={fileInputRef}
@@ -566,7 +608,27 @@
 
         const ReportView = ({ data, onReset }) => {
             const { demographics, stens, globalStens, responseStyles } = data;
+            const reportRef = useRef(null);
+
+            const handleDownloadPDF = () => {
+                const element = reportRef.current;
+                const opt = {
+                    margin: 10,
+                    filename: `Reporte_16PF_${demographics.nombre}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                // Verificar si la librería cargó
+                if (window.html2pdf) {
+                    html2pdf().set(opt).from(element).save();
+                } else {
+                    alert("La librería de PDF no cargó correctamente. Por favor use la opción de imprimir del navegador.");
+                    window.print();
+                }
+            };
             
+            // Textos de interpretación para Factores Globales
             const getGlobalText = (code, val) => {
                 if(code === 'EXT') return val < 4 ? "Tiende a ser una persona introvertida, reservada y autosuficiente. Prefiere trabajar sola." : val > 7 ? "Persona extravertida, socialmente participativa y orientada a la gente." : "Muestra un equilibrio entre la necesidad de privacidad y la interacción social.";
                 if(code === 'ANS') return val < 4 ? "Bajo nivel de ansiedad. Se muestra tranquila, relajada y estable emocionalmente." : val > 7 ? "Alto nivel de ansiedad. Puede sentirse tensa, irritable o sobrepasada por las exigencias." : "Nivel de ansiedad promedio. Maneja el estrés de manera adecuada en situaciones normales.";
@@ -576,136 +638,146 @@
                 return "";
             };
 
+            // Auto-descarga al montar (Opcional, puede ser bloqueado por el navegador en móviles)
+            useEffect(() => {
+                // handleDownloadPDF(); 
+            }, []);
+
             return (
-                <div className="max-w-5xl mx-auto bg-white p-12 rounded-xl shadow-2xl fade-in print:shadow-none print:w-full print:p-0">
-                    <div className="flex justify-between items-start mb-10 border-b pb-6 print:hidden">
-                        <button onClick={onReset} className="text-gray-600 hover:text-gray-900 flex items-center gap-2 font-medium">&larr; Evaluar otro paciente</button>
-                        <button onClick={() => window.print()} className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg flex items-center gap-2 font-bold shadow-md transition-colors"><FileText className="w-5 h-5" /> Imprimir / Guardar PDF</button>
+                <div>
+                    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 no-print">
+                        <button onClick={handleDownloadPDF} id="btn-download-pdf" className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-2">
+                            <Download className="w-5 h-5" /> Descargar PDF
+                        </button>
+                        <button onClick={onReset} className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-2">
+                            <ArrowRight className="w-5 h-5" /> Nuevo Análisis
+                        </button>
                     </div>
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b-4 border-gray-800 pb-6">
-                        <div>
-                            <h1 className="text-4xl font-extrabold text-gray-900">INFORME 16PF-5</h1>
-                            <p className="text-gray-500 font-semibold text-lg mt-1">Perfil Factorial de Personalidad</p>
-                        </div>
-                        <div className="text-right text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <p className="mb-1 text-lg"><span className="font-bold">Paciente:</span> {demographics.nombre}</p>
-                            <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-left mt-2">
-                                <p><span className="font-bold">Edad:</span> {demographics.edad}</p>
-                                <p><span className="font-bold">Sexo:</span> {demographics.sexo}</p>
-                                <p><span className="font-bold">Estudios:</span> {demographics.educacion}</p>
+
+                    <div ref={reportRef} className="max-w-5xl mx-auto bg-white p-12 rounded-xl shadow-2xl fade-in print:shadow-none print:w-full print:p-0">
+                        {/* Encabezado del Informe */}
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b-4 border-gray-800 pb-6">
+                            <div>
+                                <h1 className="text-4xl font-extrabold text-gray-900">INFORME 16PF-5</h1>
+                                <p className="text-gray-500 font-semibold text-lg mt-1">Perfil Factorial de Personalidad</p>
+                            </div>
+                            <div className="text-right text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <p className="mb-1 text-lg"><span className="font-bold">Paciente:</span> {demographics.nombre}</p>
+                                <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-left mt-2">
+                                    <p><span className="font-bold">Edad:</span> {demographics.edad}</p>
+                                    <p><span className="font-bold">Sexo:</span> {demographics.sexo}</p>
+                                    <p><span className="font-bold">Estudios:</span> {demographics.educacion}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    {/* Estilos de Respuesta */}
-                    <div className="mb-8 break-inside-avoid">
-                        <h3 className="text-xl font-bold bg-gray-100 p-3 mb-4 rounded border-l-4 border-gray-500">Estilos de Respuesta</h3>
-                        <div className="grid grid-cols-3 gap-4">
-                            {Object.keys(responseStyles).map(key => (
-                                <div key={key} className="border p-3 rounded bg-white text-center">
-                                    <div className="font-bold text-gray-700 text-lg">{key}</div>
-                                    <div className="text-2xl font-black text-gray-800">{responseStyles[key]}</div>
-                                    <div className="text-[10px] text-gray-400 mt-1">Sten (1-10)</div>
-                                </div>
-                            ))}
+                        
+                        {/* Estilos de Respuesta */}
+                        <div className="mb-8 break-inside-avoid">
+                            <h3 className="text-xl font-bold bg-gray-100 p-3 mb-4 rounded border-l-4 border-gray-500">Estilos de Respuesta</h3>
+                            <div className="grid grid-cols-3 gap-4">
+                                {Object.keys(responseStyles).map(key => (
+                                    <div key={key} className="border p-3 rounded bg-white text-center">
+                                        <div className="font-bold text-gray-700 text-lg">{key}</div>
+                                        <div className="text-2xl font-black text-gray-800">{responseStyles[key]}</div>
+                                        <div className="text-[10px] text-gray-400 mt-1">Sten (1-10)</div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Factores Globales */}
-                    <div className="mb-10 break-inside-avoid">
-                        <h3 className="text-xl font-bold bg-purple-50 p-3 mb-6 rounded border-l-4 border-purple-600 text-purple-900 flex items-center gap-2"><Activity className="w-5 h-5"/> Factores Globales (Dimensiones Secundarias)</h3>
-                        <div className="space-y-4">
-                            {Object.keys(GLOBAL_FACTORS).map(key => {
-                                const val = globalStens[key];
-                                const info = GLOBAL_FACTORS[key];
+                        {/* Factores Globales */}
+                        <div className="mb-10 break-inside-avoid">
+                            <h3 className="text-xl font-bold bg-purple-50 p-3 mb-6 rounded border-l-4 border-purple-600 text-purple-900 flex items-center gap-2"><Activity className="w-5 h-5"/> Factores Globales (Dimensiones Secundarias)</h3>
+                            <div className="space-y-4">
+                                {Object.keys(GLOBAL_FACTORS).map(key => {
+                                    const val = globalStens[key];
+                                    const info = GLOBAL_FACTORS[key];
+                                    return (
+                                        <div key={key} className="border p-4 rounded-lg bg-white shadow-sm">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <h4 className="font-bold text-lg text-gray-800">{info.name} <span className="text-sm font-normal text-gray-500">({key})</span></h4>
+                                                <span className={`px-3 py-1 rounded-full text-sm font-bold ${val > 7 ? 'bg-purple-100 text-purple-800' : val < 4 ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600'}`}>Sten: {val}</span>
+                                            </div>
+                                            <div className="relative h-4 bg-gray-200 rounded-full mb-3 overflow-hidden">
+                                                <div className="absolute top-0 bottom-0 left-0 bg-purple-500 transition-all duration-500" style={{ width: `${val * 10}%` }}></div>
+                                            </div>
+                                            <p className="text-sm text-gray-700 italic">"{getGlobalText(key, val)}"</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="page-break"></div>
+
+                        {/* Factores Primarios */}
+                        <div className="mb-10 break-inside-avoid">
+                            <h3 className="text-xl font-bold bg-blue-50 p-3 mb-6 rounded border-l-4 border-blue-600 text-blue-900 flex items-center gap-2"><BarChart2 className="w-5 h-5"/> Perfil Gráfico (16 Factores Primarios)</h3>
+                            <div className="grid grid-cols-12 gap-2 text-xs font-bold text-gray-500 border-b-2 border-gray-200 mb-3 pb-2 uppercase tracking-wider">
+                                <div className="col-span-1">Fac</div>
+                                <div className="col-span-3 text-right pr-4">Polo Bajo (-)</div>
+                                <div className="col-span-4 text-center grid grid-cols-10">
+                                    <span className="text-gray-300">1</span><span>2</span><span>3</span><span className="bg-gray-100 rounded">4</span><span className="bg-gray-100 rounded">5</span>
+                                    <span className="bg-gray-100 rounded">6</span><span className="bg-gray-100 rounded">7</span><span>8</span><span>9</span><span className="text-gray-300">10</span>
+                                </div>
+                                <div className="col-span-3 pl-4">Polo Alto (+)</div>
+                                <div className="col-span-1 text-center">Sten</div>
+                            </div>
+                            {Object.keys(stens).map(factorKey => {
+                                const val = stens[factorKey];
+                                const info = FACTORS[factorKey];
                                 return (
-                                    <div key={key} className="border p-4 rounded-lg bg-white shadow-sm">
-                                        <div className="flex justify-between items-center mb-2">
-                                            <h4 className="font-bold text-lg text-gray-800">{info.name} <span className="text-sm font-normal text-gray-500">({key})</span></h4>
-                                            <span className={`px-3 py-1 rounded-full text-sm font-bold ${val > 7 ? 'bg-purple-100 text-purple-800' : val < 4 ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600'}`}>Sten: {val}</span>
+                                    <div key={factorKey} className="grid grid-cols-12 gap-2 items-center text-sm mb-3 py-1 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                        <div className="col-span-1 font-bold text-blue-900 text-lg">{factorKey}</div>
+                                        <div className="col-span-3 text-right text-gray-600 text-xs pr-4">{info.low}</div>
+                                        <div className="col-span-4 relative h-8 bg-white rounded border border-gray-200 shadow-inner">
+                                            <div className="absolute inset-0 grid grid-cols-10 pointer-events-none">
+                                                {[...Array(9)].map((_, i) => <div key={i} className="border-r border-gray-100 h-full"></div>)}
+                                            </div>
+                                            <div className={`absolute top-1/2 -mt-2 w-4 h-4 rounded-full border-2 border-white shadow-md z-10 ${val <= 3 ? 'bg-orange-500' : val >= 8 ? 'bg-blue-600' : 'bg-gray-400'}`} style={{ left: `calc(${(val-1)*10}% + 5% - 8px)` }}></div>
                                         </div>
-                                        
-                                        {/* Barra Visual Global */}
-                                        <div className="relative h-4 bg-gray-200 rounded-full mb-3 overflow-hidden">
-                                            <div className="absolute top-0 bottom-0 left-0 bg-purple-500 transition-all duration-500" style={{ width: `${val * 10}%` }}></div>
-                                        </div>
-
-                                        <p className="text-sm text-gray-700 italic">"{getGlobalText(key, val)}"</p>
+                                        <div className="col-span-3 text-gray-600 text-xs pl-4">{info.high}</div>
+                                        <div className="col-span-1 text-center font-bold">{val}</div>
                                     </div>
                                 );
                             })}
                         </div>
-                    </div>
 
-                    <div className="page-break"></div>
-
-                    {/* Factores Primarios */}
-                    <div className="mb-10 break-inside-avoid">
-                        <h3 className="text-xl font-bold bg-blue-50 p-3 mb-6 rounded border-l-4 border-blue-600 text-blue-900 flex items-center gap-2"><BarChart2 className="w-5 h-5"/> Perfil Gráfico (16 Factores Primarios)</h3>
-                        <div className="grid grid-cols-12 gap-2 text-xs font-bold text-gray-500 border-b-2 border-gray-200 mb-3 pb-2 uppercase tracking-wider">
-                            <div className="col-span-1">Fac</div>
-                            <div className="col-span-3 text-right pr-4">Polo Bajo (-)</div>
-                            <div className="col-span-4 text-center grid grid-cols-10">
-                                <span className="text-gray-300">1</span><span>2</span><span>3</span><span className="bg-gray-100 rounded">4</span><span className="bg-gray-100 rounded">5</span>
-                                <span className="bg-gray-100 rounded">6</span><span className="bg-gray-100 rounded">7</span><span>8</span><span>9</span><span className="text-gray-300">10</span>
-                            </div>
-                            <div className="col-span-3 pl-4">Polo Alto (+)</div>
-                            <div className="col-span-1 text-center">Sten</div>
-                        </div>
-                        {Object.keys(stens).map(factorKey => {
-                            const val = stens[factorKey];
-                            const info = FACTORS[factorKey];
-                            return (
-                                <div key={factorKey} className="grid grid-cols-12 gap-2 items-center text-sm mb-3 py-1 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                    <div className="col-span-1 font-bold text-blue-900 text-lg">{factorKey}</div>
-                                    <div className="col-span-3 text-right text-gray-600 text-xs pr-4">{info.low}</div>
-                                    <div className="col-span-4 relative h-8 bg-white rounded border border-gray-200 shadow-inner">
-                                        <div className="absolute inset-0 grid grid-cols-10 pointer-events-none">
-                                            {[...Array(9)].map((_, i) => <div key={i} className="border-r border-gray-100 h-full"></div>)}
-                                        </div>
-                                        <div className={`absolute top-1/2 -mt-2 w-4 h-4 rounded-full border-2 border-white shadow-md z-10 ${val <= 3 ? 'bg-orange-500' : val >= 8 ? 'bg-blue-600' : 'bg-gray-400'}`} style={{ left: `calc(${(val-1)*10}% + 5% - 8px)` }}></div>
-                                    </div>
-                                    <div className="col-span-3 text-gray-600 text-xs pl-4">{info.high}</div>
-                                    <div className="col-span-1 text-center font-bold">{val}</div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Interpretación Detallada */}
-                    <div className="mt-8">
-                        <h3 className="text-xl font-bold bg-orange-50 p-3 mb-6 rounded border-l-4 border-orange-500 text-orange-900">Interpretación de Factores Primarios</h3>
-                        <div className="grid grid-cols-1 gap-4">
-                            {Object.keys(stens).map(key => {
-                                const val = stens[key];
-                                const info = FACTORS[key];
-                                const isExtreme = val <= 3 || val >= 8;
-                                const isHigh = val >= 6; 
-                                return (
-                                    <div key={key} className={`border p-4 rounded-lg flex flex-col md:flex-row gap-4 items-center break-inside-avoid ${isExtreme ? 'shadow-md border-gray-300' : 'border-gray-100 opacity-80'}`}>
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl flex-shrink-0 ${isExtreme ? (val<=3?'bg-orange-100 text-orange-700':'bg-blue-100 text-blue-700') : 'bg-gray-100 text-gray-500'}`}>{key}</div>
-                                        <div className="flex-grow text-center md:text-left">
-                                            <h4 className="font-bold text-gray-800">{info.name} <span className="text-sm font-normal text-gray-500">({info.low} vs {info.high})</span></h4>
-                                            <p className="text-sm mt-1">
-                                                <span className="font-semibold text-gray-700">Interpretación:</span> {isHigh ? info.descHigh : info.descLow}
-                                            </p>
-                                        </div>
-                                        <div className="text-center w-24 flex-shrink-0">
-                                            <div className="text-xs text-gray-400 uppercase tracking-wide">Sten</div>
-                                            <div className="text-2xl font-black text-gray-800">{val}</div>
-                                            <div className={`text-xs font-bold px-2 py-0.5 rounded-full mt-1 inline-block ${val <= 3 ? 'bg-orange-100 text-orange-700' : val >= 8 ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
-                                                {val <= 3 ? 'BAJO (-)' : val >= 8 ? 'ALTO (+)' : 'PROMEDIO'}
+                        {/* Interpretación Detallada */}
+                        <div className="mt-8">
+                            <h3 className="text-xl font-bold bg-orange-50 p-3 mb-6 rounded border-l-4 border-orange-500 text-orange-900">Interpretación de Factores Primarios</h3>
+                            <div className="grid grid-cols-1 gap-4">
+                                {Object.keys(stens).map(key => {
+                                    const val = stens[key];
+                                    const info = FACTORS[key];
+                                    const isExtreme = val <= 3 || val >= 8;
+                                    const isHigh = val >= 6; 
+                                    return (
+                                        <div key={key} className={`border p-4 rounded-lg flex flex-col md:flex-row gap-4 items-center break-inside-avoid ${isExtreme ? 'shadow-md border-gray-300' : 'border-gray-100 opacity-80'}`}>
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl flex-shrink-0 ${isExtreme ? (val<=3?'bg-orange-100 text-orange-700':'bg-blue-100 text-blue-700') : 'bg-gray-100 text-gray-500'}`}>{key}</div>
+                                            <div className="flex-grow text-center md:text-left">
+                                                <h4 className="font-bold text-gray-800">{info.name} <span className="text-sm font-normal text-gray-500">({info.low} vs {info.high})</span></h4>
+                                                <p className="text-sm mt-1">
+                                                    <span className="font-semibold text-gray-700">Interpretación:</span> {isHigh ? info.descHigh : info.descLow}
+                                                </p>
+                                            </div>
+                                            <div className="text-center w-24 flex-shrink-0">
+                                                <div className="text-xs text-gray-400 uppercase tracking-wide">Sten</div>
+                                                <div className="text-2xl font-black text-gray-800">{val}</div>
+                                                <div className={`text-xs font-bold px-2 py-0.5 rounded-full mt-1 inline-block ${val <= 3 ? 'bg-orange-100 text-orange-700' : val >= 8 ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
+                                                    {val <= 3 ? 'BAJO (-)' : val >= 8 ? 'ALTO (+)' : 'PROMEDIO'}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )
-                            })}
+                                    )
+                                })}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="mt-16 text-center text-xs text-gray-400 border-t pt-6">
-                        <p className="font-semibold">Informe generado automáticamente por Sistema Web 16PF-5 Profesional.</p>
-                        <p>Este documento es confidencial y para uso exclusivo del profesional evaluador.</p>
+                        <div className="mt-16 text-center text-xs text-gray-400 border-t pt-6">
+                            <p className="font-semibold">Informe generado automáticamente por Sistema Web 16PF-5 Profesional.</p>
+                            <p>Este documento es confidencial y para uso exclusivo del profesional evaluador.</p>
+                        </div>
                     </div>
                 </div>
             );
