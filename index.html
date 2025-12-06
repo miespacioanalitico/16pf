@@ -21,6 +21,9 @@
         .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* Mejoras para móvil */
+        button, input[type="file"] { cursor: pointer; touch-action: manipulation; }
+        
         /* Estilos de impresión */
         @media print {
             .no-print { display: none !important; }
@@ -63,7 +66,7 @@
             'C': { name: 'Estabilidad', low: 'Reactivo, Inestable', high: 'Emocionalmente Estable', descLow: 'Se perturba con facilidad, emocional, inestable', descHigh: 'Madura, tranquila, afronta la realidad' },
             'E': { name: 'Dominancia', low: 'Deferente', high: 'Dominante', descLow: 'Cooperativa, evita conflictos, sumisa, humilde', descHigh: 'Asertiva, agresiva, competitiva, obstinada' },
             'F': { name: 'Animación', low: 'Serio, Reprimido', high: 'Entusiasta, Espontáneo', descLow: 'Seria, Reprimida, cuidadosa, introspectiva', descHigh: 'Entusiasta, espontánea, alegre, expresiva' },
-            'G': { name: 'Atención a Normas', low: 'Inconforme', high: 'Cumplidora', descLow: 'Expedita, esquiva las reglas, indulgente consigo misma', descHigh: 'Escrupulosa, moralista, formal, responsable' },
+            'G': { name: 'Atención a Normas', low: 'Inconforme, Indulgente', high: 'Cumplidor, Formal', descLow: 'Expedita, esquiva las reglas, indulgente consigo misma', descHigh: 'Escrupulosa, moralista, formal, responsable' },
             'H': { name: 'Atrevimiento', low: 'Tímido, Cohibido', high: 'Atrevido, Seguro', descLow: 'Tímida, temerosa, Cohibida. Cauta', descHigh: 'Aventurera, socialmente atrevida, emprendedora' },
             'I': { name: 'Sensibilidad', low: 'Objetivo, Utilitario', high: 'Sensible, Sentimental', descLow: 'Utilitaria, ruda, confía en sí misma, realista', descHigh: 'Esteta, sentimental, dependiente, impresionable' },
             'L': { name: 'Vigilancia', low: 'Confiado, Adaptable', high: 'Vigilante, Suspicaz', descLow: 'Adaptable, acepta condiciones, sin sospechas', descHigh: 'Suspicaz, escéptica, precavida, desconfiada' },
@@ -71,9 +74,9 @@
             'N': { name: 'Privacidad', low: 'Abierto, Genuino', high: 'Privado, Calculador', descLow: 'Genuina, llana, natural, ingenua', descHigh: 'Calculadora, discreta, astuta, refinada' },
             'O': { name: 'Aprensión', low: 'Seguro, Despreocupado', high: 'Aprensivo, Inseguro', descLow: 'Despreocupada, satisfecha, tranquila', descHigh: 'Insegura, preocupada, se culpabiliza' },
             'Q1': { name: 'Apertura al Cambio', low: 'Tradicional', high: 'Aperturista', descLow: 'Conservadora, apegada a lo familiar', descHigh: 'Experimental, liberal, analítica, innovadora' },
-            'Q2': { name: 'Autosuficiencia', low: 'Seguidor', high: 'Autosuficiente', descLow: 'Se integra en el grupo, dependiente', descHigh: 'Individualista, prefiere estar sola, llena de recursos' },
-            'Q3': { name: 'Perfeccionismo', low: 'Flexible', high: 'Perfeccionista', descLow: 'Tolerante con el desorden, indisciplinada', descHigh: 'Organizada, disciplinada, socialmente precisa' },
-            'Q4': { name: 'Tensión', low: 'Relajado', high: 'Tenso', descLow: 'Plácida, paciente, tranquila', descHigh: 'Energética, impaciente, intranquila, sobreexcitada' }
+            'Q2': { name: 'Autosuficiencia', low: 'Seguidor, Grupo', high: 'Autosuficiente, Individualista', descLow: 'Se integra en el grupo, dependiente', descHigh: 'Individualista, prefiere estar sola, llena de recursos' },
+            'Q3': { name: 'Perfeccionismo', low: 'Flexible, Tolerante', high: 'Perfeccionista, Organizado', descLow: 'Tolerante con el desorden, indisciplinada', descHigh: 'Organizada, disciplinada, socialmente precisa' },
+            'Q4': { name: 'Tensión', low: 'Relajado, Plácido', high: 'Tenso, Enérgico', descLow: 'Plácida, paciente, tranquila', descHigh: 'Energética, impaciente, intranquila, sobreexcitada' }
         };
 
         const GLOBAL_FACTORS = {
@@ -315,56 +318,91 @@
                         <h1 className="text-3xl font-bold text-blue-800 mb-2">Cuestionario Factorial de Personalidad (16PF-5)</h1>
                         <p className="text-gray-600">Instrumento de evaluación psicológica profesional</p>
                     </div>
+
                     <div className="bg-blue-50 p-6 rounded-md mb-8 text-sm text-blue-900 border-l-4 border-blue-500 shadow-sm">
                         <h3 className="font-bold text-lg mb-2 flex items-center gap-2"><Info className="w-5 h-5"/> Instrucciones Generales</h3>
                         <ul className="list-disc pl-5 space-y-2">
-                            <li>A continuación encontrará unas frases que permitirán conocer sus actitudes e intereses.</li>
-                            <li><strong>En general no existen respuestas "Buenas" ni "Malas".</strong></li>
-                            <li>Conteste con sinceridad; de esta forma se podrá conocer mejor su forma de ser.</li>
-                            <li>Cada frase contiene tres posibles respuestas (a, b, c); normalmente la alternativa <strong>"b"</strong> viene con una interrogante <strong>(?)</strong>, para ser señalada cuando no es posible decidirse entre la a y la b.</li>
-                            <li><strong>No medite su respuesta.</strong> Marque la primera que le venga a la mente.</li>
+                            <li>Encontrará frases para conocer sus actitudes e intereses. <strong>No existen respuestas "Buenas" ni "Malas".</strong></li>
+                            <li>Conteste con sinceridad para conocer mejor su forma de ser.</li>
+                            <li>Cada frase tiene 3 opciones (a, b, c). La alternativa "b" suele ser <strong>"?"</strong>. Úsela solo si no puede decidirse.</li>
+                            <li><strong>No medite su respuesta.</strong> Marque lo primero que le venga a la mente.</li>
                             <li><strong>Si tiene dudas, pregunte al examinador.</strong></li>
-                            <li>Trate de contestar todas las preguntas sin saltarse ninguna.</li>
+                            <li>Trate de no saltar ninguna pregunta.</li>
                         </ul>
                     </div>
+
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre Completo</label>
-                            <input type="text" required className="block w-full rounded-md border-gray-300 shadow-sm border p-3 focus:ring-blue-500 focus:border-blue-500" 
-                                value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} placeholder="Ingrese su nombre completo" />
+                        <div className="grid grid-cols-1 gap-6">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre Completo</label>
+                                <input type="text" required className="block w-full rounded-md border-gray-300 shadow-sm border p-3 focus:ring-blue-500 focus:border-blue-500" 
+                                    value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} placeholder="Ingrese su nombre completo" />
+                            </div>
                         </div>
+                        
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Edad</label>
-                                <input type="number" min="1" required className="block w-full rounded-md border-gray-300 shadow-sm border p-3" 
-                                    value={formData.edad} onChange={e => { const val = e.target.value; if (val >= 0) setFormData({...formData, edad: val}); }} />
+                                <input 
+                                    type="number" 
+                                    min="1" 
+                                    required 
+                                    className="block w-full rounded-md border-gray-300 shadow-sm border p-3" 
+                                    value={formData.edad} 
+                                    onChange={e => {
+                                        const val = e.target.value;
+                                        if (val >= 0) setFormData({...formData, edad: val});
+                                    }} 
+                                />
                             </div>
+                            
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Sexo / Género</label>
-                                <select className="block w-full rounded-md border-gray-300 shadow-sm border p-3"
-                                    value={formData.sexo} onChange={e => setFormData({...formData, sexo: e.target.value})}>
-                                    {GENDER_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                <select 
+                                    className="block w-full rounded-md border-gray-300 shadow-sm border p-3"
+                                    value={formData.sexo} 
+                                    onChange={e => setFormData({...formData, sexo: e.target.value})}
+                                >
+                                    {GENDER_OPTIONS.map(opt => (
+                                        <option key={opt} value={opt}>{opt}</option>
+                                    ))}
                                 </select>
                                 {formData.sexo === "Otro" && (
-                                    <input type="text" placeholder="Especifique su género" required className="mt-2 block w-full rounded-md border-gray-300 shadow-sm border p-3 bg-gray-50 text-sm"
-                                        value={formData.sexoOtro} onChange={e => setFormData({...formData, sexoOtro: e.target.value})} />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Especifique su género"
+                                        required
+                                        className="mt-2 block w-full rounded-md border-gray-300 shadow-sm border p-3 bg-gray-50 text-sm"
+                                        value={formData.sexoOtro}
+                                        onChange={e => setFormData({...formData, sexoOtro: e.target.value})}
+                                    />
                                 )}
                             </div>
+
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Grado Educativo</label>
                                 <select className="block w-full rounded-md border-gray-300 shadow-sm border p-3"
                                     value={formData.educacion} onChange={e => setFormData({...formData, educacion: e.target.value})}>
-                                    <option>PRIMARIA</option><option>SECUNDARIA</option><option>SUPERIOR</option><option>MAESTRIA</option><option>DOCTORADO</option>
+                                    <option>PRIMARIA</option>
+                                    <option>SECUNDARIA</option>
+                                    <option>SUPERIOR</option>
+                                    <option>MAESTRIA</option>
+                                    <option>DOCTORADO</option>
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Estado Civil</label>
                                 <select className="block w-full rounded-md border-gray-300 shadow-sm border p-3"
                                     value={formData.estadoCivil} onChange={e => setFormData({...formData, estadoCivil: e.target.value})}>
-                                    <option>SOLTERO</option><option>CASADO</option><option>DIVORCIADO</option><option>VIUDO</option><option>CONVIVIENTE</option>
+                                    <option>SOLTERO</option>
+                                    <option>CASADO</option>
+                                    <option>DIVORCIADO</option>
+                                    <option>VIUDO</option>
+                                    <option>CONVIVIENTE</option>
                                 </select>
                             </div>
                         </div>
+
                         <button type="submit" className="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-lg shadow-md text-white bg-blue-700 hover:bg-blue-800 font-bold text-lg transition-all transform hover:scale-[1.01]">
                             Comenzar Evaluación <ArrowRight className="ml-2 h-5 w-5" />
                         </button>
@@ -588,7 +626,7 @@
                 <div className="max-w-5xl mx-auto bg-white p-12 rounded-xl shadow-2xl fade-in print:shadow-none print:w-full print:p-0">
                     <div className="flex justify-between items-start mb-10 border-b pb-6 print:hidden">
                         <button onClick={onReset} className="text-gray-600 hover:text-gray-900 flex items-center gap-2 font-medium">&larr; Evaluar otro paciente</button>
-                        <button onClick={() => window.print()} className="bg-gray-800 text-white px-6 py-2 rounded-lg font-bold shadow-md">Imprimir / PDF</button>
+                        <button onClick={() => window.print()} className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg flex items-center gap-2 font-bold shadow-md transition-colors"><FileText className="w-5 h-5" /> Imprimir / Guardar PDF</button>
                     </div>
                     <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b-4 border-gray-800 pb-6">
                         <div>
