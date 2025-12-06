@@ -66,7 +66,7 @@
         const FACTORS = {
             'A': { name: 'Afabilidad', low: 'Reservada', high: 'Participativa', descLow: 'Fria, impersonal, distante', descHigh: 'Cálida, afable, generosa, atenta a los demás' },
             'B': { name: 'Razonamiento', low: 'Pensamiento Concreto', high: 'Pensamiento Abstracto', descLow: 'Capacidad mental baja, incapaz de manejar problemas abstractos', descHigh: 'Capacidad mental alta, perspicaz, aprendizaje rápido' },
-            'C': { name: 'Estabilidad', low: 'Reactivo', high: 'Emocionalmente Estable', descLow: 'Se perturba con facilidad, emocional, inestable', descHigh: 'Madura, tranquila, afronta la realidad' },
+            'C': { name: 'Estabilidad', low: 'Reactivo, Inestable', high: 'Emocionalmente Estable', descLow: 'Se perturba con facilidad, emocional, inestable', descHigh: 'Madura, tranquila, afronta la realidad' },
             'E': { name: 'Dominancia', low: 'Deferente', high: 'Dominante', descLow: 'Cooperativa, evita conflictos, sumisa, humilde', descHigh: 'Asertiva, agresiva, competitiva, obstinada' },
             'F': { name: 'Animación', low: 'Serio', high: 'Animada', descLow: 'Reprimida, cuidadosa, introspectiva, taciturna', descHigh: 'Entusiasta, espontánea, alegre, expresiva' },
             'G': { name: 'Atención a Normas', low: 'Inconforme', high: 'Cumplidora', descLow: 'Expedita, esquiva las reglas, indulgente consigo misma', descHigh: 'Escrupulosa, moralista, formal, responsable' },
@@ -329,7 +329,7 @@
                         <ul className="list-disc pl-5 space-y-2">
                             <li>Encontrará frases para conocer sus actitudes e intereses. <strong>No existen respuestas "Buenas" ni "Malas".</strong></li>
                             <li>Conteste con sinceridad para conocer mejor su forma de ser.</li>
-                            <li>Cada frase tiene 3 opciones (a, b, c). La alternativa "b" suele ser <strong>"Indeciso"</strong> (o ?). Úsela solo si no puede decidirse.</li>
+                            <li>Cada frase tiene 3 opciones (a, b, c). La alternativa <strong>"b"</strong> suele ser <strong>"Indeciso"</strong>. Úsela solo si no puede decidirse.</li>
                             <li><strong>No medite su respuesta.</strong> Marque lo primero que le venga a la mente.</li>
                             <li><strong>Si tiene dudas, pregunte al examinador.</strong></li>
                             <li>Trate de no saltar ninguna pregunta.</li>
@@ -583,8 +583,22 @@
             // Generación automática de PDF al cargar datos
             useEffect(() => {
                 if (reportData && window.html2pdf) {
-                     // Opcional: Descomentar para autodescarga en PC, en móvil mejor dejar botón manual
-                     // document.getElementById('btn-download-pdf').click();
+                     // Intento de descarga automática si el navegador lo permite
+                     try {
+                        const element = document.getElementById('report-container');
+                        if (element) {
+                            const opt = {
+                                margin: 10,
+                                filename: `Reporte_16PF_${reportData.demographics.nombre}.pdf`,
+                                image: { type: 'jpeg', quality: 0.98 },
+                                html2canvas: { scale: 2 },
+                                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                            };
+                            html2pdf().set(opt).from(element).save();
+                        }
+                     } catch (e) {
+                         console.log("Autodescarga bloqueada, usar botón manual");
+                     }
                 }
             }, [reportData]);
 
@@ -652,7 +666,6 @@
                     html2canvas: { scale: 2 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
-                // Verificar si la librería cargó
                 if (window.html2pdf) {
                     html2pdf().set(opt).from(element).save();
                 } else {
@@ -661,7 +674,6 @@
                 }
             };
             
-            // Textos de interpretación para Factores Globales
             const getGlobalText = (code, val) => {
                 if(code === 'EXT') return val < 4 ? "Tiende a ser una persona introvertida, reservada y autosuficiente. Prefiere trabajar sola." : val > 7 ? "Persona extravertida, socialmente participativa y orientada a la gente." : "Muestra un equilibrio entre la necesidad de privacidad y la interacción social.";
                 if(code === 'ANS') return val < 4 ? "Bajo nivel de ansiedad. Se muestra tranquila, relajada y estable emocionalmente." : val > 7 ? "Alto nivel de ansiedad. Puede sentirse tensa, irritable o sobrepasada por las exigencias." : "Nivel de ansiedad promedio. Maneja el estrés de manera adecuada en situaciones normales.";
@@ -671,15 +683,10 @@
                 return "";
             };
 
-            // Auto-descarga al montar (Opcional, puede ser bloqueado por el navegador en móviles)
-            useEffect(() => {
-                // handleDownloadPDF(); 
-            }, []);
-
             return (
                 <div>
                     <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 no-print">
-                        <button onClick={handleDownloadPDF} id="btn-download-pdf" className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-2">
+                        <button onClick={handleDownloadPDF} id="btn-download-pdf" className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-2 animate-pulse">
                             <Download className="w-5 h-5" /> Descargar PDF
                         </button>
                         <button onClick={onReset} className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-full font-bold shadow-lg flex items-center gap-2">
@@ -687,7 +694,7 @@
                         </button>
                     </div>
 
-                    <div ref={reportRef} className="max-w-5xl mx-auto bg-white p-12 rounded-xl shadow-2xl fade-in print:shadow-none print:w-full print:p-0">
+                    <div id="report-container" ref={reportRef} className="max-w-5xl mx-auto bg-white p-12 rounded-xl shadow-2xl fade-in print:shadow-none print:w-full print:p-0">
                         {/* Encabezado del Informe */}
                         <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b-4 border-gray-800 pb-6">
                             <div>
